@@ -109,7 +109,12 @@ public class TxHandler {
                 }
         );
 
-        return (Transaction[]) verifiedTx.toArray();
+        Transaction[] result = new  Transaction[verifiedTx.size()];
+        for (int i = 0; i < verifiedTx.size(); i++) {
+            result[i] = verifiedTx.get(i);
+        }
+
+        return result;
     }
 
 }
