@@ -1,12 +1,10 @@
 package com.blockchain.assignment1.src;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class TxHandler {
 
-    private UTXOPool utxoPool;
+    private final UTXOPool utxoPool;
 
     /**
      * Creates a public ledger whose current com.blockchain.assignment1.src.UTXOPool (collection of unspent transaction outputs) is
@@ -80,8 +78,38 @@ public class TxHandler {
      */
     public Transaction[] handleTxs(Transaction[] possibleTxs) {
         // IMPLEMENT THIS
+        List<Transaction> verifiedTx = new ArrayList<>();
+        Arrays.stream(possibleTxs).filter(
+                this::isValidTx
+        ).forEach(
 
-        return null;
+
+                // input
+                validTx -> {
+                    // add result
+                    verifiedTx.add(validTx);
+
+                    // remove output that product input for the current tx
+                    validTx.getInputs().forEach(
+                            input -> {
+                                int outputIndex = input.outputIndex;
+                                byte[] prevTxHash = input.prevTxHash;
+                                UTXO utxo = new UTXO(prevTxHash, outputIndex);
+                                utxoPool.removeUTXO(utxo);
+                            }
+                    );
+
+                    // add output in current tx for next tx to validate
+                    for (int i = 0; i < validTx.getOutputs().size(); i++) {
+                        Transaction.Output output =  validTx.getOutputs().get(i);
+                        // to form previous hash
+                        UTXO utxo = new UTXO(validTx.getHash(), i);
+                        utxoPool.addUTXO(utxo, output);
+                    }
+                }
+        );
+
+        return (Transaction[]) verifiedTx.toArray();
     }
 
 }
