@@ -82,9 +82,6 @@ public class TxHandler {
         Arrays.stream(possibleTxs).filter(
                 this::isValidTx
         ).forEach(
-
-
-                // input
                 validTx -> {
                     // add result
                     verifiedTx.add(validTx);
